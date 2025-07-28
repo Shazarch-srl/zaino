@@ -12,7 +12,14 @@ docker-compose up --build
 
 2. Access the app at [http://localhost:8000](http://localhost:8000).
 
-Database migrations are run automatically on start.
+Database migrations are run automatically on start. After the container boots,
+load the initial dataset:
+
+```bash
+docker compose exec web python manage.py loaddata initial_data.json
+```
+
+This fixture also creates an admin user (`admin`/`admin`).
 
 ## Production Build
 

@@ -1,0 +1,74 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "password": "pbkdf2_sha256$1000000$HMTXXUNMkDh5A8Q5Tt8KJG$vEcUZG5gxB6pChjIDLQ503QtPobVm3Do8RWlbweAKo=",
+      "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "last_login": null,
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "date_joined": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "zaino.brand",
+    "pk": 1,
+    "fields": {"name": "Generic"}
+  },
+  {
+    "model": "zaino.category",
+    "pk": 1,
+    "fields": {"name": "Shelter", "description": "Tents and sleeping gear"}
+  },
+  {
+    "model": "zaino.category",
+    "pk": 2,
+    "fields": {"name": "Cooking", "description": "Stoves and kitchenware"}
+  },
+  {
+    "model": "zaino.category",
+    "pk": 3,
+    "fields": {"name": "Clothing", "description": "Layers and garments"}
+  },
+  {
+    "model": "zaino.item",
+    "pk": 1,
+    "fields": {
+      "name": "Two-person Tent",
+      "description": "Lightweight tent",
+      "weight": 2.5,
+      "quantity": 1,
+      "category": 1,
+      "brand": 1
+    }
+  },
+  {
+    "model": "zaino.item",
+    "pk": 2,
+    "fields": {
+      "name": "Backpacking Stove",
+      "description": "Gas cartridge stove",
+      "weight": 0.4,
+      "quantity": 1,
+      "category": 2,
+      "brand": 1
+    }
+  },
+  {
+    "model": "zaino.item",
+    "pk": 3,
+    "fields": {
+      "name": "Down Jacket",
+      "description": "Warm layer",
+      "weight": 0.7,
+      "quantity": 1,
+      "category": 3,
+      "brand": 1
+    }
+  }
+]
