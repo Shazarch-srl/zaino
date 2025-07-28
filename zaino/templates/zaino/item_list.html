@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Pack your Zaino</h2>
+<form method="post">
+    {% csrf_token %}
+    <ul>
+        {% for item in items %}
+        <li>
+            <label>
+                <input type="checkbox" name="items" value="{{ item.id }}" {% if item in selected_items %}checked{% endif %}>
+                {{ item.name }} ({{ item.weight }} kg) - {{ item.category.name }}
+            </label>
+        </li>
+        {% endfor %}
+    </ul>
+    <button type="submit">Calculate Weight</button>
+</form>
+
+{% if selected_items %}
+<h3>Selected Items</h3>
+<ul>
+    {% for item in selected_items %}
+    <li>{{ item.name }} ({{ item.weight }} kg)</li>
+    {% endfor %}
+</ul>
+<p><strong>Total Weight:</strong> {{ total_weight }} kg</p>
+{% endif %}
+{% endblock %}
