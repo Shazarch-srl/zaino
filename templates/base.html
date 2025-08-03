@@ -497,23 +497,42 @@
                 });
             }
             
-            // Track if this is the first load
-            const isFirstLoad = !sessionStorage.getItem('zaino-loaded');
-            if (isFirstLoad) {
-                sessionStorage.setItem('zaino-loaded', 'true');
+            // Track items state for animations
+            const selectedItemsList = document.querySelector('.selected-items-list');
+            if (selectedItemsList) {
+                const currentItems = Array.from(selectedItemsList.querySelectorAll('.selected-item')).map(item => 
+                    item.getAttribute('data-item-id')
+                );
+                const previousItems = JSON.parse(sessionStorage.getItem('zaino-items') || '[]');
+                const isFirstLoad = !sessionStorage.getItem('zaino-loaded');
                 
-                // Animate selected items list on first page load only
-                const selectedItemsList = document.querySelector('.selected-items-list');
-                if (selectedItemsList) {
+                if (isFirstLoad) {
+                    // First load - animate entire section and all items
+                    sessionStorage.setItem('zaino-loaded', 'true');
                     selectedItemsList.classList.add('first-load');
                     
-                    // Stagger animation for individual items on first load
                     const selectedItems = selectedItemsList.querySelectorAll('.selected-item');
                     selectedItems.forEach((item, index) => {
                         item.classList.add('first-load');
                         item.style.animationDelay = `${index * 0.1}s`;
                     });
+                } else {
+                    // Subsequent loads - animate only new/changed items
+                    const addedItems = currentItems.filter(id => !previousItems.includes(id));
+                    const removedItems = previousItems.filter(id => !currentItems.includes(id));
+                    
+                    // Animate newly added items
+                    addedItems.forEach((itemId, index) => {
+                        const itemElement = selectedItemsList.querySelector(`[data-item-id="${itemId}"]`);
+                        if (itemElement) {
+                            itemElement.classList.add('item-added');
+                            itemElement.style.animationDelay = `${index * 0.1}s`;
+                        }
+                    });
                 }
+                
+                // Store current state for next comparison
+                sessionStorage.setItem('zaino-items', JSON.stringify(currentItems));
             }
             
             // Add loading state to calculate button
