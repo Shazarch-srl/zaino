@@ -26,3 +26,7 @@ args = "python manage.py loaddata zaino/fixtures/initial_data.json"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python manage.py runserver 0.0.0.0:8000"
+
+[[ports]]
+localPort = 8000
+externalPort = 80
