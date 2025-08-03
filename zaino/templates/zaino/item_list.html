@@ -1,38 +1,112 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container">
-    <h2 class="mb-3">Pack your Zaino</h2>
-    <form method="post">
-        {% csrf_token %}
-        {% for category in categories %}
-            <h4 class="mt-4">{{ category.name }}</h4>
-            <ul class="list-group">
-            {% for item in category.items.all %}
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="items" value="{{ item.id }}" id="item{{ item.id }}" {% if item in selected_items %}checked{% endif %}>
-                        <label class="form-check-label" for="item{{ item.id }}">
-                            {{ item.name }} ({{ item.weight }} kg){% if item.brand %} - {{ item.brand.name }}{% endif %}
-                        </label>
-                    </div>
-                    {% if item.description %}<small class="text-muted">{{ item.description }}</small>{% endif %}
-                </li>
-            {% endfor %}
-            </ul>
-        {% endfor %}
-        <button class="btn btn-primary mt-3" type="submit">Calculate Weight</button>
-    </form>
 
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" id="gear-form">
+    {% csrf_token %}
+    
     {% if selected_items %}
-    <div class="mt-4">
-        <h3>Selected Items</h3>
-        <ul class="list-group">
-            {% for item in selected_items %}
-            <li class="list-group-item">{{ item.name }} ({{ item.weight }} kg)</li>
-            {% endfor %}
-        </ul>
-        <p class="mt-2"><strong>Total Weight:</strong> {{ total_weight }} kg</p>
+    <div class="weight-display">
+        <div class="weight-number">{{ total_weight|floatformat:1 }}</div>
+        <div class="weight-label">kg total weight</div>
+    </div>
+    
+    <div class="selected-items-list">
+        <h3>📦 Selected Gear ({{ selected_items|length }} items)</h3>
+        {% for item in selected_items %}
+        <div class="selected-item">
+            <span>{{ item.name }}</span>
+            <span class="item-weight">{{ item.weight|floatformat:1 }}kg</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="weight-display">
+        <div class="weight-number">0.0</div>
+        <div class="weight-label">kg total weight</div>
     </div>
     {% endif %}
+    
+    {% if categories %}
+        {% for category in categories %}
+        <div class="category-section">
+            <div class="category-header">
+                {% if category.name == "Shelter" %}🏕️
+                {% elif category.name == "Clothing" %}👕
+                {% elif category.name == "Cooking" %}🍳
+                {% elif category.name == "Safety" %}🚨
+                {% elif category.name == "Navigation" %}🧭
+                {% elif category.name == "Hydration" %}💧
+                {% elif category.name == "Food" %}🍎
+                {% else %}📦{% endif %}
+                {{ category.name }}
+                <small style="opacity: 0.8; font-weight: normal;">({{ category.items.all|length }} items)</small>
+            </div>
+            
+            {% for item in category.items.all %}
+            <div class="item {% if item in selected_items %}selected{% endif %}">
+                <div class="item-checkbox">
+                    <input type="checkbox" 
+                           name="items" 
+                           value="{{ item.id }}" 
+                           id="item{{ item.id }}" 
+                           {% if item in selected_items %}checked{% endif %}>
+                    <div class="checkmark"></div>
+                </div>
+                
+                <div class="item-info">
+                    <div class="item-name">{{ item.name }}</div>
+                    <div class="item-details">
+                        <span class="item-weight">{{ item.weight|floatformat:1 }}kg</span>
+                        {% if item.brand %}
+                        <span class="item-brand">{{ item.brand.name }}</span>
+                        {% endif %}
+                    </div>
+                    {% if item.description %}
+                    <div class="item-description">{{ item.description }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📦</div>
+        <h3>No gear available</h3>
+        <p>Add some items in the admin panel to get started!</p>
+    </div>
+    {% endif %}
+</form>
+
+<div class="bottom-bar">
+    <button class="calculate-btn" type="submit" form="gear-form">
+        🎒 Update Pack Weight
+    </button>
 </div>
+
+<script>
+// Auto-submit form when checkboxes change for real-time updates
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('gear-form');
+    const checkboxes = document.querySelectorAll('input[name="items"]');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // Add visual feedback
+            const item = this.closest('.item');
+            if (this.checked) {
+                item.style.transform = 'translateX(5px)';
+            } else {
+                item.style.transform = 'translateX(0)';
+            }
+            
+            // Auto-submit after short delay for better UX
+            setTimeout(() => {
+                form.submit();
+            }, 200);
+        });
+    });
+});
+</script>
 {% endblock %}
