@@ -38,3 +38,12 @@ docker run -p 8000:8000 zaino
 ## Usage
 
 Create categories and items in the Django admin interface (`/admin`). Then select items on the home page to compute your pack weight.
+
+## Manual QA
+
+To manually verify checkbox behavior:
+
+1. Open the home page at `/`.
+2. Click anywhere on a gear item row; the checkbox should toggle and the row highlight.
+3. Select multiple items and observe the total weight update automatically after a brief delay.
+4. Deselect an item and ensure it is removed from the selected list and the total weight recalculates.
