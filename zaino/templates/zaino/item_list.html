@@ -11,10 +11,10 @@
         <div class="weight-label">kg total weight</div>
     </div>
     
-    <div class="selected-items-list">
+    <div class="selected-items-list" data-item-count="{{ selected_items|length }}">
         <h3>📦 Selected Gear ({{ selected_items|length }} items)</h3>
         {% for item in selected_items %}
-        <div class="selected-item">
+        <div class="selected-item" data-item-id="{{ item.id }}">
             <span>{{ item.name }}</span>
             <span class="item-weight">{{ item.weight|floatformat:1 }}kg</span>
         </div>

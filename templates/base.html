@@ -262,11 +262,10 @@
             border-radius: 15px;
             padding: 15px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: top;
+            transition: opacity 0.3s ease;
         }
         
-        .selected-items-list.animate-in {
+        .selected-items-list.first-load {
             animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -301,19 +300,71 @@
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #e0e0e0;
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .selected-item:last-child {
             border-bottom: none;
         }
         
+        .selected-item.first-load {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .selected-item.item-added {
+            opacity: 0;
+            transform: translateX(-20px) scale(0.95);
+            animation: itemAdded 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .selected-item.item-removed {
+            animation: itemRemoved 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
         @keyframes slideInLeft {
             to {
                 opacity: 1;
                 transform: translateX(0);
+            }
+        }
+        
+        @keyframes itemAdded {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px) scale(0.95);
+            }
+            70% {
+                transform: translateX(2px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        @keyframes itemRemoved {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                max-height: 50px;
+            }
+            50% {
+                opacity: 0.3;
+                transform: translateX(20px) scale(0.95);
+                max-height: 50px;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(20px) scale(0.9);
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-top: 0;
+                margin-bottom: 0;
             }
         }
         
@@ -446,16 +497,23 @@
                 });
             }
             
-            // Animate selected items list on page load
-            const selectedItemsList = document.querySelector('.selected-items-list');
-            if (selectedItemsList) {
-                selectedItemsList.classList.add('animate-in');
+            // Track if this is the first load
+            const isFirstLoad = !sessionStorage.getItem('zaino-loaded');
+            if (isFirstLoad) {
+                sessionStorage.setItem('zaino-loaded', 'true');
                 
-                // Stagger animation for individual items
-                const selectedItems = selectedItemsList.querySelectorAll('.selected-item');
-                selectedItems.forEach((item, index) => {
-                    item.style.animationDelay = `${index * 0.1}s`;
-                });
+                // Animate selected items list on first page load only
+                const selectedItemsList = document.querySelector('.selected-items-list');
+                if (selectedItemsList) {
+                    selectedItemsList.classList.add('first-load');
+                    
+                    // Stagger animation for individual items on first load
+                    const selectedItems = selectedItemsList.querySelectorAll('.selected-item');
+                    selectedItems.forEach((item, index) => {
+                        item.classList.add('first-load');
+                        item.style.animationDelay = `${index * 0.1}s`;
+                    });
+                }
             }
             
             // Add loading state to calculate button
